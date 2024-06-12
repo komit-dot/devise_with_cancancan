@@ -1,0 +1,8 @@
+<% if user_signed_in? %> 
+ <div> Welcome <%= current_user.email %> </div>
+  <h1> This is our Index of home Page </h1>
+  <%= button_to "Sign out", destroy_user_session_path, method: :delete %> 
+<% else %>
+  <h1>Please Login first by email and password to use this application. </h1>
+  <%= button_to "Sign in", new_user_session_path %> 
+<% end %>
