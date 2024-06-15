@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
@@ -14,9 +13,17 @@
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
     <% if user_signed_in? %>
-      Signed in as <%= current_user.email %>. Not you?
-      <%= link_to "Edit profile", edit_user_registration_path %>
-      <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
+    <table>
+      <tr>
+        <th>
+          <h2 style="text-align: left;">
+          Signed in as <%= current_user.email %>. Not you?
+          <%= link_to "Edit profile", edit_user_registration_path %>
+          <%= button_to "Sign out Profile", destroy_user_session_path, method: :delete %>
+          </h2>
+        </th>
+      </tr>
+    <table>
 
     <% else %>
       <%= link_to "Sign up", new_user_registration_path %> or

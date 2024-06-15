@@ -2,9 +2,15 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :trackable
 
   has_many :items, dependent: :destroy
-  belongs_to :role
+  belongs_to :role, optional: true
+  validates :name, presence: true
+  before_save :assign_role
+
+  def assign_role
+    self.role = Role.find_by name: 'Regular' if role.nil?
+  end
 
 end

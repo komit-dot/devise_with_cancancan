@@ -9,6 +9,12 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
+    @joined_on = @user.created_at.to_formatted_s(:short)
+    if @user.current_sign_in_at
+      @last_login = @user.current_sign_in_at.to_formatted_s(:short)
+    else
+      @last_login = 'never'
+    end
   end
 
   # GET /users/new
@@ -26,7 +32,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to User_url(@user), notice: "User was successfully created." }
+        format.html { redirect_to user_url(@user), notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -37,14 +43,21 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to user_url(@user), notice: "User was successfully updated." }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if user_params[:password].blank?
+      user_params.delete(:password)
+      user_params.delete(:password_confirmation)
+    end
+
+    successfully_updated = if needs_password?(@user, user_params)
+                           @user.update(user_params)
+                         else
+                           @user.update_without_password(user_params)
+                         end
+
+    if successfully_updated
+      redirect_to @user, notice: 'User was successfully updated.'
+    else
+      render :edit
     end
   end
 
@@ -64,8 +77,12 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
     end
 
+    def needs_password?(_user, params)
+      params[:password].present?
+    end
+
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :email, :role)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :role_id)
     end
 end
