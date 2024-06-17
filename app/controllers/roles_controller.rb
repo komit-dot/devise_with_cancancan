@@ -1,6 +1,6 @@
 class RolesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_role, only: %i[ show edit update destroy ]
+  load_and_authorize_resource
 
 
   # GET /roles or /roles.json
@@ -19,7 +19,6 @@ class RolesController < ApplicationController
 
   # GET /roles/new
   def new
-    @role = Role.new
   end
 
   # GET /roles/1/edit
@@ -28,8 +27,6 @@ class RolesController < ApplicationController
 
   # POST /roles or /roles.json
   def create
-    @role = Role.new(role_params)
-
     respond_to do |format|
       if @role.save
         format.html { redirect_to role_url(@role), notice: "Role was successfully created." }
@@ -65,11 +62,6 @@ class RolesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_role
-      @role = Role.find(params[:id])
-    end
-
     # Only allow a list of trusted parameters through.
     def role_params
       params.require(:role).permit(:name, :description)

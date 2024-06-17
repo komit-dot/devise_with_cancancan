@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
+  load_and_authorize_resource
   before_action :authenticate_user!
-  before_action :set_User, only: %i[ show edit update destroy ]
 
   # GET /users or /users.json
   def index
@@ -19,17 +19,15 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
-    @user = User.new
   end
 
   # GET /users/1/edit
   def edit
+    authorize! :edit, @item
   end
 
   # POST /users or /users.json
   def create
-    @user = User.new(user_params)
-
     respond_to do |format|
       if @user.save
         format.html { redirect_to user_url(@user), notice: "User was successfully created." }
@@ -72,11 +70,6 @@ class UsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_User
-      @user = User.find(params[:id])
-    end
-
     def needs_password?(_user, params)
       params[:password].present?
     end
