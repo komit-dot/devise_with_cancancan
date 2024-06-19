@@ -12,23 +12,35 @@
   <body>
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
-    <% if user_signed_in? %>
-    <table>
-      <tr>
-        <th>
-          <h2 style="text-align: left;">
-          Signed in as <%= current_user.email %>. Not you?
-          <%= link_to "Edit profile", edit_user_registration_path %>
-          <%= button_to "Sign out Profile", destroy_user_session_path, method: :delete %>
-          </h2>
-        </th>
-      </tr>
-    <table>
+    <header>
+      <% if user_signed_in? %>
+        <table>
+          <tr>
+            <th>
+              <h2 style="text-align: left;">
+              Signed in as <%= current_user.email %><br> Not you?
+              <%= link_to "Edit profile", edit_user_registration_path %>
+              <%= button_to "Sign out Profile", destroy_user_session_path, method: :delete %>
+              </h2>
+            </th>
+          </tr>
+        <table>
+      <% else %>
+        <%= link_to "Sign up", new_user_registration_path %> or
+        <%= link_to "Sign in", new_user_session_path %>
+      <% end %>
+      <nav>
+        <% if @current_user&.admin? %>
+        <h2>This user is Admin it can change anything.</h2>
+          <%= link_to "Items", items_path %> |
+          <%= link_to "Users", users_path %> |
+          <%= link_to "Roles", roles_path %>
+        <% end %>
+      </nav>
 
-    <% else %>
-      <%= link_to "Sign up", new_user_registration_path %> or
-      <%= link_to "Sign in", new_user_session_path %>
-    <% end %>
-    <%= yield %>
+    </header>
+    <main>
+     <%= yield %>
+    </main>
   </body>
 </html>
